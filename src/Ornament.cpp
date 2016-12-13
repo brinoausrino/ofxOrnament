@@ -59,7 +59,7 @@ int Ornament::getWallpaperGroupAsInt(){
     return wallpaperGroup;
 }
 
-void Ornament::setTileSize(int t){
+void Ornament::setTileSize(float t){
     tileSize = t;
 }
 
@@ -87,7 +87,7 @@ void Ornament::update() {
     tileFbo.begin();
     ofClear(0, 0, 0, 0);
     ornamentShader.begin();
-    wallpaperShader.setUniform1i("cell_structure", tile->getCellStructure() );
+    ornamentShader.setUniform1i("cell_structure", tile->getCellStructure() );
     ornamentShader.setUniform1i("wallpaper_group", wallpaperGroup );
     ornamentShader.setUniform1f("width", inputTexture.getWidth() );
     ornamentShader.setUniform1f("height", inputTexture.getHeight() );

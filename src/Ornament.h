@@ -19,14 +19,14 @@
 #include "OrnamentTypes.h"
 
 class Ornament {
-	
-  public:
-	
+    
+public:
+    
     Ornament(){};
     
-	void setup(int w = 512, int h = 512, WALLPAPER_GROUP wallpaperGroup = WPG_P3, int tileSize = 150, float angle = 0);
-	void update();
-	void draw(int x, int y);
+    void setup(int w = 512, int h = 512, WALLPAPER_GROUP wallpaperGroup = WPG_P3, int tileSize = 150, float angle = 0);
+    void update();
+    void draw(int x, int y);
     
     void loadTexture(ofTexture texture);
     void setWallpaperGroup(WALLPAPER_GROUP group);
@@ -41,7 +41,7 @@ class Ornament {
     void setCellStructure(int s);
     int getCellStructure();
     
-    void setTileSize(int t);
+    void setTileSize(float t);
     int getTileSize();
     
     void setAngle(float angleRad);
@@ -56,7 +56,7 @@ private:
     ofFbo fbo;
     ofFbo tileFbo;
     
-    int tileSize;
+    float tileSize;
     float angle;
     
     int width,height;
@@ -65,8 +65,6 @@ private:
     ofShader ornamentShader;
     
     std::unique_ptr<Tile> tile;
-    
-	
 };
 
 #endif
