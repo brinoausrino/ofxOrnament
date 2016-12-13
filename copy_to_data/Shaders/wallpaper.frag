@@ -202,7 +202,6 @@ vec2 do_hexagonal(vec2 pos){
     //map to global texure coordinate
     px = map(px,0,tWidth,0,p3.x);
     py = map(py,0,tHeight,1,p4.y-1);
-
     
     //translation for following lines
     if(nline>0){
@@ -213,11 +212,17 @@ vec2 do_hexagonal(vec2 pos){
     }
     
     px = fmod(px, p3.x);
-    //if(px<=0) px += p3.x;
     
     //first triangle
-    if(PointInTriangle(vec2(px,py),vec2(0,0),p1,p4)){
-        px = px + p3.x-1;
+
+    /*if(PointInTriangle(vec2(px,py),vec2(0,0),p1,p4)){
+        px = px + p3.x;
+    }*/
+    if (PointInTriangle(vec2(px+1.0,py),vec2(0,0),p1,p4)){
+        px = px -1.5 + p3.x;
+    }
+    else if (PointInTriangle(vec2(px-1.0,py),vec2(0,0),p1,p4)){
+        px = px -1.5 + p3.x;
     }
     return vec2(px,py); 
 }
@@ -239,6 +244,5 @@ void main( void )
     
     
     vec4 c = texture2DRect( u_tex_unit0, pos);
-
     gl_FragColor = c;
 }

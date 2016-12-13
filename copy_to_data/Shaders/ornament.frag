@@ -102,7 +102,7 @@ bool PointInTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2)
     float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
     float t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
 
-    if ((s < 0) != (t < 0))
+    if ((s < -0) != (t < 0))
         return false;
 
     float A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
@@ -117,7 +117,10 @@ bool PointInTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2)
 
 bool isInTile(vec2 p)
 {
-	if(PointInTriangle(p,p1,p2,p4) || PointInTriangle(p,p2,p3,p4)){
+	//pt resolves edge jitter
+	vec2 pt = vec2(p.x-0.1,p.y-0.1);
+	if(PointInTriangle(p,p1,p2,p4) || PointInTriangle(p,p2,p3,p4)
+		||PointInTriangle(pt,p1,p2,p4) || PointInTriangle(pt,p2,p3,p4)){
 		return true;
 	}
 	return false;
@@ -294,6 +297,8 @@ int getTileTriangle(vec2 pos,int type){
 void do_p4(vec2 pos)
 {
 	int s = getTileSquare(pos, 0);
+
+
 
 	if (s == 0){
 		gl_FragColor = texture2DRect( u_tex_unit0, gl_TexCoord[0].st );
@@ -537,4 +542,6 @@ void main( void )
 	}else{
 		gl_FragColor = vec4(0.0,0.0,0.0,0.0);
 	}
+
+
 }
