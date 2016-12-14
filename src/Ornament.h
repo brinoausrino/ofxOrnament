@@ -50,6 +50,10 @@ public:
 private:
     void createOrnament();
     
+    string getVertexShader();
+    string getOrnamentShader();
+    string getWallpaperShader();
+    
     ofTexture inputTexture;
     ofTexture outputTexture;
     WALLPAPER_GROUP wallpaperGroup;
