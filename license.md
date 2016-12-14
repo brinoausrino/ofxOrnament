@@ -1,6 +1,4 @@
-
-
-The code in this repository is available under the MIT License.
+The code in this repository is available under the [MIT License](https://secure.wikimedia.org/wikipedia/en/wiki/Mit_license).
 
 Copyright (c) 2016- Brian Eschrich
 
