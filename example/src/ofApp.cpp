@@ -3,14 +3,18 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
+    //init video stream
     vidGrabber.setDeviceID(0);
     vidGrabber.setDesiredFrameRate(60);
     vidGrabber.initGrabber(800, 600);
     
+    //init ornament
     ornament.setup(1024,768);
-    tex = img.getTexture();
+    
+    //assign video input to ornament
     ornament.loadTexture(vidGrabber.getTexture());
     
+    //setup gui
     tileSize.set("tile size", 150, 30, 400);
     tileSize.addListener(this, &ofApp::onTileSizeChanged);
     wallpaperGroup.set("group", 12, 9, 16);
@@ -22,69 +26,46 @@ void ofApp::setup(){
     panel.add(wallpaperGroup);
     panel.add(angle);
 }
- 
+
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ofSetWindowTitle(ofToString(ofGetFrameRate()));
+    
+    //update vidgrabber
     vidGrabber.update();
     
+    //update ornament
     if(vidGrabber.isFrameNew()){ 
         ornament.update();
     }
-	
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(0);
     
-   // ofDrawRectangle(0, 0, 23, 23);
-    
+    //draw ornament
     ornament.draw(0,0);
     
+    //draw debug view to see ornament part in camera picture
+    ornament.drawDebug(0, 300,400,300);
+    
+    //draw gui
     ofDrawBitmapStringHighlight("wallpaperGroup: " + ofToString(ornament.getWallpaperGroupAsInt()), 10, 580);
     ofDrawBitmapStringHighlight("cellStructure: " + ofToString(ornament.getCellStructure()), 10, 600);
-    vector<ofVec2f> base = ornament.getOrnamentBase();
-    vector<ofVec2f> base2 = ornament.getTilePoly();
-    
-    
-    
-    ofPushMatrix();
-    ofTranslate(0, 300);
-    ofScale(0.3, 0.3);
-    ofSetColor(255);
-    vidGrabber.draw(0, 0,1024,768);
-    ofSetColor(255, 0, 0);
-    ofNoFill();
-    ofBeginShape();
-    for (auto point : base) {
-        ofVertex(point.x,point.y);
-    }
-    ofVertex(base[0].x,base[0].y);
-    
-    for (auto point : base2) {
-        ofVertex(point.x,point.y);
-    }
-    ofVertex(base2[0].x,base2[0].y);
-    ofEndShape();
-    ofSetColor(255);
-    ofPopMatrix();
-    
-    
     panel.draw();
-
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
+void ofApp::keyPressed  (int key){
+    //manipulate inputs
     if (key == 'm'){
         ornament.setCellStructure(ornament.getCellStructure()+1);
     }
     if (key == 'n'){
         ornament.setCellStructure(ornament.getCellStructure()-1);
     }
-    
     if (key == 'c'){
         int wg = ornament.getWallpaperGroupAsInt() + 1;
         ornament.setWallpaperGroup(wg);
@@ -96,52 +77,52 @@ void ofApp::keyPressed  (int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){ 
-	
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
+    
 }
 
 void ofApp::onTileSizeChanged(int& t){
