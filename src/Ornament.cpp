@@ -45,6 +45,7 @@ void Ornament::loadTexture(ofTexture texture){
     
     if (!tileFbo.isAllocated() || tileFbo.getWidth() != w || tileFbo.getHeight()!=h) {
         tileFbo.allocate(w, h);
+        resizeFbo.allocate(w, h);
     }
     createOrnament();
 }
@@ -90,7 +91,19 @@ void Ornament::createOrnament(){
 
 //------------------------------------------------------------------
 void Ornament::update() {
+    //resize texture
+    resizeFbo.begin();
+    ofClear(0, 0, 0, 0);
+    ofVec2f pNew, sizeNew;
+    getBoundingBox(tile->getOrnamentBase(),pNew,sizeNew);
+    toTextureSpace(pNew);
+    toTextureSpace(sizeNew);
+    ofVec2f sizeTex = resize(ofVec2f(inputTexture.getWidth(),inputTexture.getHeight()), sizeNew);
+    ofVec2f posTex = (pNew + sizeNew*0.5) - sizeTex*0.5;
+    inputTexture.draw(posTex.x,posTex.y,sizeTex.x,sizeTex.y);
+    resizeFbo.end();
     
+    //create tile
     tileFbo.begin();
     ofClear(0, 0, 0, 0);
     ornamentShader.begin();
@@ -98,11 +111,12 @@ void Ornament::update() {
     ornamentShader.setUniform1i("wallpaper_group", wallpaperGroup );
     ornamentShader.setUniform1f("width", inputTexture.getWidth() );
     ornamentShader.setUniform1f("height", inputTexture.getHeight() );
-    inputTexture.draw(0, 0);
+    resizeFbo.draw(0,0);
+    
     ornamentShader.end();
     tileFbo.end();
     
-    
+    //create wallpaper
     fbo.begin();
     ofClear(255,255,255, 0);
     ofSetColor(255,255,255, 255);
@@ -133,8 +147,52 @@ int Ornament::getCellStructure(){
 }
 
 //------------------------------------------------------------------
+///\ draw the ornament
 void Ornament::draw(int x, int y) {
     outputTexture.draw(x, y);
+}
+
+void Ornament::drawDebug(int x, int y, int w, int h ){
+    if (w == -1) {
+        w = inputTexture.getWidth();
+    }
+    if (h == -1){
+        h = inputTexture.getHeight();
+    }
+    
+    
+    ofPushMatrix();
+    ofTranslate(x, y);
+    //texture
+    ofVec2f pNew, sizeNew;
+    getBoundingBox(tile->getOrnamentBase(),pNew,sizeNew);
+    
+    ofVec2f sizeTex = resize(ofVec2f(inputTexture.getWidth(),inputTexture.getHeight()), sizeNew);
+    ofVec2f posTex = (pNew + sizeNew*0.5) - sizeTex*0.5;
+    ofVec2f scaleFactor = ofVec2f(w,h)/sizeTex;
+    
+    sizeTex*=scaleFactor;
+    
+    inputTexture.draw(0,0,sizeTex.x,sizeTex.y);
+    
+    //bounding box
+    vector<ofVec2f> base = tile->getOrnamentBase();
+    for (auto& point : base) {
+        point -= posTex;
+        point *= scaleFactor;
+    }
+    
+    ofSetColor(255, 0, 0);
+    ofNoFill();
+    ofBeginShape();
+    for (auto point : base) {
+        ofVertex(point.x,point.y);
+    }
+    ofVertex(base[0].x,base[0].y);
+    ofEndShape();
+    ofSetColor(255);
+    
+    ofPopMatrix();
 }
 
 ofTexture& Ornament::getTexture(){
@@ -938,5 +996,45 @@ string Ornament::getWallpaperShader(){
               );
     return out;
 }
+
+ofVec2f Ornament::resize(ofVec2f src, ofVec2f dst)
+{
+    float ratioDst = dst.x/dst.y;
+    float ratioSrc = src.x/src.y;
+    
+    float w = src.x;
+    float h = w / ratioDst;
+    
+    
+    if (h > dst.y)
+    {
+        h = dst.y;
+        w = h*ratioSrc;
+    }
+    return ofVec2f(w, h);
+}
+
+void Ornament::getBoundingBox(vector<ofVec2f> input, ofVec2f& pos, ofVec2f& size){
+    float xMin = 1000000;
+    float xMax = 0;
+    float yMin = 1000000;
+    float yMax = 0;
+    
+    for(auto v:input){
+        if(v.x < xMin) {xMin = v.x;}
+        if(v.x > xMax) {xMax = v.x;}
+        if(v.y < yMin) {yMin = v.y;}
+        if(v.y > yMax) {yMax = v.y;}
+    }
+    
+    pos = ofVec2f(xMin,yMin);
+    size = ofVec2f(xMax-xMin,yMax-yMin);
+}
+
+void Ornament::toTextureSpace(ofVec2f& value){
+    value.x = value.x * inputTexture.getWidth() / width;
+    value.y = value.y * inputTexture.getHeight() / height;
+}
+
 
 

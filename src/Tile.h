@@ -14,14 +14,14 @@
 #include "OrnamentTypes.h"
 
 class Tile {
-	
-  public:
-	
+    
+public:
+    
     Tile(){};
     ~Tile(){};
     void setup(int width, int height);
     
-
+    
     virtual void setCellStructure(int structure);
     int getCellStructure();
     
