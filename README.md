@@ -8,7 +8,7 @@ Generate all project files using the openFrameworks Project Generator.
 
 ##Features
 
-* takes an input texture and outputs an ornament texture with one of the 17 (currently only 8) [wallpaper patterns](https://en.wikipedia.org/wiki/Wallpaper_group) 
+* takes an input texture and outputs an ornament texture with one of the 17 (currently the nicest 8) [wallpaper patterns](https://en.wikipedia.org/wiki/Wallpaper_group) 
 * currently supported wallpaper groups
 	* [Group p4 (442)](https://en.wikipedia.org/wiki/Wallpaper_group#Group_p4_.28442.29)	
 	* [Group p4mm (*442)](https://en.wikipedia.org/wiki/Wallpaper_group#Group_p4mm_.28.2A442.29)
