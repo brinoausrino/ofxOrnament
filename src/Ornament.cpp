@@ -85,7 +85,8 @@ float Ornament::getAngle(){
 
 void Ornament::createOrnament(){
     tile = TileFactory::createTile(wallpaperGroup);
-    tile->setup(width,height);
+    //tile->setup(width,height);
+    tile->setup(inputTexture.getWidth(),inputTexture.getHeight());
     update();
 }
 
@@ -96,8 +97,8 @@ void Ornament::update() {
     ofClear(0, 0, 0, 0);
     ofVec2f pNew, sizeNew;
     getBoundingBox(tile->getOrnamentBase(),pNew,sizeNew);
-    toTextureSpace(pNew);
-    toTextureSpace(sizeNew);
+    //toTextureSpace(pNew);
+    //toTextureSpace(sizeNew);
     ofVec2f sizeTex = resize(ofVec2f(inputTexture.getWidth(),inputTexture.getHeight()), sizeNew);
     ofVec2f posTex = (pNew + sizeNew*0.5) - sizeTex*0.5;
     inputTexture.draw(posTex.x,posTex.y,sizeTex.x,sizeTex.y);
@@ -1032,6 +1033,12 @@ void Ornament::getBoundingBox(vector<ofVec2f> input, ofVec2f& pos, ofVec2f& size
 }
 
 void Ornament::toTextureSpace(ofVec2f& value){
+    float ratioSrc = inputTexture.getWidth() / inputTexture.getHeight();
+    float ratioDst = width/height;
+    
+
+    
+    
     value.x = value.x * inputTexture.getWidth() / width;
     value.y = value.y * inputTexture.getHeight() / height;
 }
