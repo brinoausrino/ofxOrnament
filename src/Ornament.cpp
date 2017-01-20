@@ -1007,10 +1007,15 @@ ofVec2f Ornament::resize(ofVec2f src, ofVec2f dst)
     float h = w / ratioDst;
     
     
-    if (h > dst.y)
+    if (ratioSrc > ratioDst && h > dst.y)
     {
         h = dst.y;
         w = h*ratioSrc;
+    }
+    else if (ratioSrc < ratioDst && w > dst.x)
+    {
+        w = dst.x;
+        h = w/ratioSrc;
     }
     return ofVec2f(w, h);
 }
