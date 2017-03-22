@@ -24,6 +24,7 @@ void Ornament::setup(int w, int h, WALLPAPER_GROUP wallpaperGroup_, int tileSize
     ornamentShader.setupShaderFromSource(GL_FRAGMENT_SHADER, getOrnamentShader());
     ornamentShader.linkProgram();
     
+    
     wallpaperShader.setupShaderFromSource(GL_VERTEX_SHADER, getVertexShader());
     wallpaperShader.setupShaderFromSource(GL_FRAGMENT_SHADER, getWallpaperShader());
     wallpaperShader.linkProgram();
@@ -134,6 +135,7 @@ void Ornament::update() {
     fbo.end();
     
     outputTexture = fbo.getTexture();
+    //outputTexture = tileFbo.getTexture();
     
     tile->updateTile();
 }
@@ -310,7 +312,7 @@ string Ornament::getOrnamentShader(){
                   float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
                   float t = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
                   
-                  if ((s < -0) != (t < 0))
+                  if ((s < 0) != (t < 0))
                       return false;
                   
                   float A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
@@ -320,7 +322,7 @@ string Ornament::getOrnamentShader(){
                       t = -t;
                       A = -A;
                   }
-                  return s > 0 && t > 0 && (s + t) < A;
+                  return s > -0.01 && t > -0.01 && (s + t) < A;
               }
               
               bool isInTile(vec2 p)
@@ -517,8 +519,12 @@ string Ornament::getOrnamentShader(){
                   else if (s == 2){
                       gl_FragColor = texture2DRect( u_tex_unit0, rotateAt (pos,mid,PI) );
                   }
-                  else {
+                  else if (s == 3){
                       gl_FragColor = texture2DRect( u_tex_unit0, rotateAt (pos,mid,PI*0.5) );
+                      
+                  }
+                  else{
+                      gl_FragColor = vec4(1,0,0,1);
                   }
               }
               
@@ -752,8 +758,7 @@ string Ornament::getOrnamentShader(){
                   }
                   
                   
-              }
-              );
+              }              );
     return out;
 }
 
@@ -830,7 +835,7 @@ string Ornament::getWallpaperShader(){
                       t = -t;
                       A = -A;
                   }
-                  return s > 0 && t > 0 && (s + t) < A;
+                  return s > -0.01 && t > -0.01 && (s + t) < A;
               }
               
               /************************
@@ -908,12 +913,12 @@ string Ornament::getWallpaperShader(){
                   if (py<0) py = tile_size + py;
                   
                   //map to global texure coordinate
-                  px = map(px,0,tile_size,p1.x,p3.x);
+                  px = map(px,0,tile_size,p1.x+1,p3.x-1);
                   py = map(py,0,tile_size,p1.y,p4.y-1);
                   
                   px = fmod(px, p3.x);
                   
-                  return vec2(px,py); 
+                  return vec2(px,py);
               }
               
               vec2 do_hexagonal(vec2 pos){
@@ -945,8 +950,6 @@ string Ornament::getWallpaperShader(){
                   if (px<0) px = tWidth + px;
                   if (py<0) py = tHeight + py;
                   
-                  //if(px<=0) px += tWidth;
-                  
                   //map to global texure coordinate
                   px = map(px,0,tWidth,0,p3.x);
                   py = map(py,0,tHeight,1,p4.y-1);
@@ -961,17 +964,29 @@ string Ornament::getWallpaperShader(){
                   
                   px = fmod(px, p3.x);
                   
-                  //first triangle
                   
-                  /*if(PointInTriangle(vec2(px,py),vec2(0,0),p1,p4)){
-                   px = px + p3.x;
-                   }*/
-                  if (PointInTriangle(vec2(px+1.0,py),vec2(0,0),p1,p4)){
-                      px = px -1.5 + p3.x;
+                  //left upper triangle
+                  vec2 a_ = p4 - p1;
+                  vec2 b = p4 - vec2(0,py);
+                  vec2 b_ = p4;
+                  float scale = length(b)/length(b_);
+                  vec2 a = a_*scale;
+                  vec2 pMax = p4 - a;
+                  
+                  //fill undefined pixels with neighbor pixels
+                  float pxTemp = px;
+                  if(px > pMax.x-1.0 && px < pMax.x+1)
+                  {
+                      // px = p3.x-1;
+                      pxTemp = px +2;
                   }
-                  else if (PointInTriangle(vec2(px-1.0,py),vec2(0,0),p1,p4)){
-                      px = px -1.5 + p3.x;
+                  else if (px <= pMax.x)
+                  {
+                      pxTemp = px + p3.x;
                   }
+                  
+                  px = pxTemp;
+                  
                   return vec2(px,py); 
               }
               
@@ -993,8 +1008,7 @@ string Ornament::getWallpaperShader(){
                   
                   vec4 c = texture2DRect( u_tex_unit0, pos);
                   gl_FragColor = c;
-              }
-              );
+              }              );
     return out;
 }
 
@@ -1041,12 +1055,11 @@ void Ornament::toTextureSpace(ofVec2f& value){
     float ratioSrc = inputTexture.getWidth() / inputTexture.getHeight();
     float ratioDst = width/height;
     
-
+    
     
     
     value.x = value.x * inputTexture.getWidth() / width;
     value.y = value.y * inputTexture.getHeight() / height;
 }
-
 
 

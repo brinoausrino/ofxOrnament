@@ -24,20 +24,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    
     void onTileSizeChanged(int& t);
     void onWallpaperGroupChanged(int& t);
     void onAngleChanged(float& t);
-    
-    ofTexture		texGray;
-    ofTexture 		texColor;
-    ofTexture		texColorAlpha;
-    
-    int 			w, h;
-    
-    ofPixels colorPixels;
-    ofPixels grayPixels;
-    ofPixels colorAlphaPixels;
     
     Ornament ornament;
     
