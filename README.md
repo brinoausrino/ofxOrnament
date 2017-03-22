@@ -1,4 +1,4 @@
-#ofxOrnament
+# ofxOrnament
 
 tool to create ornaments
 
@@ -6,7 +6,7 @@ Compatible with openFrameworks 0.9.0+
 
 Generate all project files using the openFrameworks Project Generator.
 
-##Features
+## Features
 
 * takes an input texture and outputs an ornament texture with one of the 17 (currently the nicest 8) [wallpaper patterns](https://en.wikipedia.org/wiki/Wallpaper_group) 
 * currently supported wallpaper groups
@@ -21,5 +21,5 @@ Generate all project files using the openFrameworks Project Generator.
 	* [Group p6mm (*632)](https://en.wikipedia.org/wiki/Wallpaper_group#Group_p6mm_.28.2A632.29)
 * pattern can be resized and rotated
  
-##Sample Usage
+## Sample Usage
 see example project
