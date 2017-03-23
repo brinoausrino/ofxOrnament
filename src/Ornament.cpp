@@ -708,6 +708,11 @@ string Ornament::getOrnamentShader(){
                       gl_FragColor = texture2DRect( u_tex_unit0, rotateAt (pos,p1 + (p3-p1)/2, PI) );
                   }
                   else if (p==20) {
+                      //fixes transparent point in middle
+                      vec2 p1p2 = p1 + (p2-p1)/2;
+                      base2 = p1p2 + (p3-p1p2)/3;
+                      if(pos.x < p2.x-p1.x +1 && pos.y > base2.y -1) pos += vec2(0,-0.5);
+                      
                       gl_FragColor = texture2DRect( u_tex_unit0, reflectAt (rotateAt (rotateAt (pos,p1 + (p3-p1)/2, PI),base4, 4*PI/3),p4,p2-p4) );
                   }
                   else if (p==21) {
@@ -891,6 +896,13 @@ string Ornament::getWallpaperShader(){
                       p2 = vec2(wmax,0);
                       p3 = vec2(wmax*2/3,hmax);
                       p4 = vec2(0,hmax);
+                      
+                      //hack to shrinken the hexagon (to avoid border issues)
+                      float scalePix = 1;
+                      p1 += vec2(scalePix,scalePix);
+                      p2 += vec2(-scalePix,scalePix);
+                      p3 += vec2(-scalePix,-scalePix);
+                      p4 += vec2(scalePix,-scalePix);
                   }
                   
               }
@@ -973,21 +985,20 @@ string Ornament::getWallpaperShader(){
                   vec2 a = a_*scale;
                   vec2 pMax = p4 - a;
                   
-                  //fill undefined pixels with neighbor pixels
+                  //more complicated to avoid border issues
                   float pxTemp = px;
-                  if(px > pMax.x-1.0 && px < pMax.x+1)
+                  if (px < pMax.x)
                   {
-                      // px = p3.x-1;
-                      pxTemp = px +2;
+                      pxTemp = px + p3.x -1;
                   }
-                  else if (px <= pMax.x)
+                  else if (px < pMax.x+1)
                   {
-                      pxTemp = px + p3.x;
+                      pxTemp = px+1;
                   }
                   
                   px = pxTemp;
                   
-                  return vec2(px,py); 
+                  return vec2(px,py);
               }
               
               void main( void )
@@ -1054,10 +1065,6 @@ void Ornament::getBoundingBox(vector<ofVec2f> input, ofVec2f& pos, ofVec2f& size
 void Ornament::toTextureSpace(ofVec2f& value){
     float ratioSrc = inputTexture.getWidth() / inputTexture.getHeight();
     float ratioDst = width/height;
-    
-    
-    
-    
     value.x = value.x * inputTexture.getWidth() / width;
     value.y = value.y * inputTexture.getHeight() / height;
 }
